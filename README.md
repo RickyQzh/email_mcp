@@ -36,12 +36,33 @@ license: Apache License 2.0
 ## 安装依赖
 
 ```bash
-pip install gradio[mcp] bs4
+pip install gradio[mcp] bs4 python-dotenv
 ```
 
 ## 启动服务器
 
+### 直接启动
+
 ```bash
+python email_mcp_server.py
+```
+
+### 使用环境变量启动
+
+可以通过环境变量来配置邮箱账号信息：
+
+```bash
+chmod +x start_with_env.sh
+./start_with_env.sh
+```
+
+或者手动设置环境变量：
+
+```bash
+export EMAIL_IMAP_SERVER=imap.163.com
+export EMAIL_SMTP_SERVER=smtp.163.com
+export EMAIL_ACCOUNT=your_email@163.com
+export EMAIL_PASSWORD=your_password
 python email_mcp_server.py
 ```
 

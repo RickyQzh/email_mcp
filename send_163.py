@@ -9,10 +9,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from email.header import Header
 
-# 邮件服务器配置
-SMTP_SERVER = 'smtp.163.com'
-ACCOUNT = '13831044889@163.com'
-PASSWORD = 'MFgnfTKLdcX8JcMd'  # 注意：这里应该使用授权码而非登录密码
+# 从配置文件导入环境变量
+from email_config import SMTP_SERVER, ACCOUNT, PASSWORD  # 注意：这里应该使用授权码而非登录密码
 
 class EmailSender:
     """163邮箱发送邮件类"""

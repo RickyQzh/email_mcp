@@ -2,8 +2,11 @@ import os
 import gradio as gr
 from typing import Optional, List, Dict, Any, Union
 
+# 导入环境变量配置
+from email_config import IMAP_SERVER, SMTP_SERVER, ACCOUNT, PASSWORD
+
 # 导入163邮箱接收模块
-from receive_163 import Email, IMAP_SERVER, ACCOUNT, PASSWORD
+from receive_163 import Email
 # 导入163邮箱发送模块
 from send_163 import EmailSender
 

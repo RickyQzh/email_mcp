@@ -10,9 +10,8 @@ import re
 from email.header import decode_header
 from bs4 import BeautifulSoup
 
-IMAP_SERVER = 'imap.163.com'
-ACCOUNT = '13831044889@163.com'
-PASSWORD = 'MFgnfTKLdcX8JcMd'
+# 从配置文件导入环境变量
+from email_config import IMAP_SERVER, ACCOUNT, PASSWORD
 FILE_SAVE_PATH = r''
 
 
