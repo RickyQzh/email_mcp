@@ -15,10 +15,56 @@ models: #关联模型
 #- iic/ofa_ocr-recognition_general_base_zh
 
 ## 启动文件(若SDK为Gradio/Streamlit，默认为app.py, 若为Static HTML, 默认为index.html)
-# deployspec:
-#   entry_file: app.py
+deployspec:
+  entry_file: email_mcp_server.py
 license: Apache License 2.0
 ---
+
+# 163邮箱 MCP 服务器
+
+这是一个基于Gradio的163邮箱MCP服务器，可以作为LLM的工具，用于获取和处理电子邮件。
+
+## 功能
+
+- 获取最新的未读邮件
+- 检查指定类型和数量的邮件
+- 保存邮件附件
+- 发送纯文本邮件
+- 发送HTML格式邮件
+- 发送带附件的邮件
+
+## 安装依赖
+
+```bash
+pip install gradio[mcp] bs4
+```
+
+## 启动服务器
+
+```bash
+python email_mcp_server.py
+```
+
+
+## MCP工具
+
+服务器提供以下MCP工具：
+
+1. `get_newest_email` - 获取最新的未读邮件
+2. `check_emails` - 检查指定类型和数量的邮件
+3. `save_attachment` - 保存指定的附件
+4. `send_text_email` - 发送纯文本邮件
+5. `send_html_email` - 发送HTML格式邮件
+6. `send_email_with_attachment` - 发送带附件的邮件
+
+## 连接到MCP客户端
+
+MCP服务器启动后，可以通过以下URL连接：
+
+```
+http://localhost:7860/gradio_api/mcp/sse
+```
+
 #### Clone with HTTP
 ```bash
  git clone https://www.modelscope.cn/studios/s3219521aa/email_mcp.git
