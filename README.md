@@ -35,6 +35,14 @@ license: Apache License 2.0
 
 ## 安装依赖
 
+### 使用requirements.txt安装
+
+```bash
+pip install -r requirements.txt
+```
+
+### 手动安装
+
 ```bash
 pip install gradio[mcp] bs4 python-dotenv
 ```
