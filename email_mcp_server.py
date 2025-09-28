@@ -2,8 +2,8 @@ import os
 import gradio as gr
 from typing import Optional, List, Dict, Any, Union
 
-# 导入环境变量配置
-from email_config import IMAP_SERVER, SMTP_SERVER, ACCOUNT, PASSWORD
+# 服务器自动匹配工具
+from email_config import get_imap_server, get_smtp_server
 
 # 导入163邮箱接收模块
 from receive_163 import Email
@@ -11,9 +11,9 @@ from receive_163 import Email
 from send_163 import EmailSender
 
 def get_newest_email(
+    account: str,
+    password: str,
     imap_server: Optional[str] = None,
-    account: Optional[str] = None,
-    password: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     获取最新的未读邮件，包括发件人、主题、内容和附件信息。
@@ -21,15 +21,19 @@ def get_newest_email(
     Returns:
         Dict: 包含邮件信息的字典，包括发件人、主题、日期、内容和附件列表
 
-    可选参数（用于覆盖环境变量配置）:
-        imap_server (str, optional): 自定义IMAP服务器地址
-        account (str, optional): 邮箱账号
-        password (str, optional): 授权码/密码
+    必填参数:
+        account (str): 邮箱账号
+        password (str): 授权码/密码
+
+    可选参数:
+        imap_server (str, optional): 自定义IMAP服务器地址；未提供时自动匹配
     """
+    if not account or not password:
+        raise ValueError("account 和 password 为必填参数")
     email_163 = Email(
-        imap=imap_server or IMAP_SERVER,
-        account=account or ACCOUNT,
-        password=password or PASSWORD,
+        imap=imap_server or get_imap_server(account),
+        account=account,
+        password=password,
     )
     msg_data = email_163.get_newest()
     return {
@@ -41,11 +45,11 @@ def get_newest_email(
     }
 
 def check_emails(
+    account: str,
+    password: str,
     message_type: str = "Unseen",
     count: int = 5,
     imap_server: Optional[str] = None,
-    account: Optional[str] = None,
-    password: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
     """
     检查指定类型和数量的邮件。
@@ -57,15 +61,19 @@ def check_emails(
     Returns:
         List[Dict]: 包含邮件信息的字典列表
 
-    可选参数（用于覆盖环境变量配置）:
-        imap_server (str, optional): 自定义IMAP服务器地址
-        account (str, optional): 邮箱账号
-        password (str, optional): 授权码/密码
+    必填参数:
+        account (str): 邮箱账号
+        password (str): 授权码/密码
+
+    可选参数:
+        imap_server (str, optional): 自定义IMAP服务器地址；未提供时自动匹配
     """
+    if not account or not password:
+        raise ValueError("account 和 password 为必填参数")
     email_163 = Email(
-        imap=imap_server or IMAP_SERVER,
-        account=account or ACCOUNT,
-        password=password or PASSWORD,
+        imap=imap_server or get_imap_server(account),
+        account=account,
+        password=password,
     )
     messages = []
     
@@ -83,10 +91,10 @@ def check_emails(
 
 def save_attachment(
     file_name: str,
+    account: str,
+    password: str,
     save_path: str = '',
     imap_server: Optional[str] = None,
-    account: Optional[str] = None,
-    password: Optional[str] = None,
 ) -> str:
     """
     保存指定的附件到指定路径。
@@ -98,15 +106,19 @@ def save_attachment(
     Returns:
         str: 保存的文件路径
 
-    可选参数（用于覆盖环境变量配置）:
-        imap_server (str, optional): 自定义IMAP服务器地址
-        account (str, optional): 邮箱账号
-        password (str, optional): 授权码/密码
+    必填参数:
+        account (str): 邮箱账号
+        password (str): 授权码/密码
+
+    可选参数:
+        imap_server (str, optional): 自定义IMAP服务器地址；未提供时自动匹配
     """
+    if not account or not password:
+        raise ValueError("account 和 password 为必填参数")
     email_163 = Email(
-        imap=imap_server or IMAP_SERVER,
-        account=account or ACCOUNT,
-        password=password or PASSWORD,
+        imap=imap_server or get_imap_server(account),
+        account=account,
+        password=password,
         file_save_path=save_path,
     )
     msg_data = email_163.get_newest()
@@ -127,10 +139,10 @@ def send_text_email(
     to_addr: Union[str, List[str]],
     subject: str,
     content: str,
+    account: str,
+    password: str,
     cc_addr: Union[str, List[str], None] = None,
     smtp_server: Optional[str] = None,
-    account: Optional[str] = None,
-    password: Optional[str] = None,
 ) -> Dict[str, str]:
     """
     发送纯文本邮件
@@ -144,15 +156,19 @@ def send_text_email(
     Returns:
         dict: 包含发送状态和消息的字典
 
-    可选参数（用于覆盖环境变量配置）:
-        smtp_server (str, optional): 自定义SMTP服务器地址
-        account (str, optional): 发送者邮箱账号
-        password (str, optional): 授权码/密码
+    必填参数:
+        account (str): 发送者邮箱账号
+        password (str): 授权码/密码
+
+    可选参数:
+        smtp_server (str, optional): 自定义SMTP服务器地址；未提供时自动匹配
     """
+    if not account or not password:
+        raise ValueError("account 和 password 为必填参数")
     sender = EmailSender(
-        smtp_server=smtp_server or SMTP_SERVER,
-        account=account or ACCOUNT,
-        password=password or PASSWORD,
+        account=account,
+        password=password,
+        smtp_server=smtp_server or get_smtp_server(account),
     )
     return sender.send_text_email(to_addr, subject, content, cc_addr)
 
@@ -160,10 +176,10 @@ def send_html_email(
     to_addr: Union[str, List[str]],
     subject: str,
     html_content: str,
+    account: str,
+    password: str,
     cc_addr: Union[str, List[str], None] = None,
     smtp_server: Optional[str] = None,
-    account: Optional[str] = None,
-    password: Optional[str] = None,
 ) -> Dict[str, str]:
     """
     发送HTML格式邮件
@@ -177,15 +193,19 @@ def send_html_email(
     Returns:
         dict: 包含发送状态和消息的字典
 
-    可选参数（用于覆盖环境变量配置）:
-        smtp_server (str, optional): 自定义SMTP服务器地址
-        account (str, optional): 发送者邮箱账号
-        password (str, optional): 授权码/密码
+    必填参数:
+        account (str): 发送者邮箱账号
+        password (str): 授权码/密码
+
+    可选参数:
+        smtp_server (str, optional): 自定义SMTP服务器地址；未提供时自动匹配
     """
+    if not account or not password:
+        raise ValueError("account 和 password 为必填参数")
     sender = EmailSender(
-        smtp_server=smtp_server or SMTP_SERVER,
-        account=account or ACCOUNT,
-        password=password or PASSWORD,
+        account=account,
+        password=password,
+        smtp_server=smtp_server or get_smtp_server(account),
     )
     return sender.send_html_email(to_addr, subject, html_content, cc_addr)
 
@@ -194,11 +214,11 @@ def send_email_with_attachment(
     subject: str,
     content: str,
     attachment_paths: Union[str, List[str]],
+    account: str,
+    password: str,
     cc_addr: Union[str, List[str], None] = None,
     is_html: bool = False,
     smtp_server: Optional[str] = None,
-    account: Optional[str] = None,
-    password: Optional[str] = None,
 ) -> Dict[str, str]:
     """
     发送带附件的邮件
@@ -214,15 +234,19 @@ def send_email_with_attachment(
     Returns:
         dict: 包含发送状态和消息的字典
 
-    可选参数（用于覆盖环境变量配置）:
-        smtp_server (str, optional): 自定义SMTP服务器地址
-        account (str, optional): 发送者邮箱账号
-        password (str, optional): 授权码/密码
+    必填参数:
+        account (str): 发送者邮箱账号
+        password (str): 授权码/密码
+
+    可选参数:
+        smtp_server (str, optional): 自定义SMTP服务器地址；未提供时自动匹配
     """
+    if not account or not password:
+        raise ValueError("account 和 password 为必填参数")
     sender = EmailSender(
-        smtp_server=smtp_server or SMTP_SERVER,
-        account=account or ACCOUNT,
-        password=password or PASSWORD,
+        account=account,
+        password=password,
+        smtp_server=smtp_server or get_smtp_server(account),
     )
     return sender.send_email_with_attachment(to_addr, subject, content, attachment_paths, cc_addr, is_html)
 

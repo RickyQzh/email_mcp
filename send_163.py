@@ -9,24 +9,25 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from email.header import Header
 
-# 从配置文件导入环境变量
-from email_config import SMTP_SERVER, ACCOUNT, PASSWORD  # 注意：这里应该使用授权码而非登录密码
+from email_config import get_smtp_server  # 自动匹配SMTP服务器
 
 class EmailSender:
     """163邮箱发送邮件类"""
     
-    def __init__(self, smtp_server=SMTP_SERVER, account=ACCOUNT, password=PASSWORD):
+    def __init__(self, account, password, smtp_server=None):
         """
         初始化邮件发送器
         
         Args:
-            smtp_server (str): SMTP服务器地址
             account (str): 邮箱账号
             password (str): 邮箱密码或授权码
+            smtp_server (str, optional): SMTP服务器地址；若不提供，将依据账号自动匹配
         """
-        self.smtp_server = smtp_server
+        if not account or not password:
+            raise ValueError("account 和 password 为必填参数")
         self.account = account
         self.password = password
+        self.smtp_server = smtp_server or get_smtp_server(account)
         
     def send_text_email(self, to_addr, subject, content, cc_addr=None):
         """

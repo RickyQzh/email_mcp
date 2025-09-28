@@ -10,8 +10,8 @@ import re
 from email.header import decode_header
 from bs4 import BeautifulSoup
 
-# 从配置文件导入环境变量
-from email_config import IMAP_SERVER, ACCOUNT, PASSWORD
+# 服务器自动匹配工具
+from email_config import get_imap_server
 FILE_SAVE_PATH = r''
 
 
@@ -281,6 +281,9 @@ def decode_MIME():
 
 
 if __name__ == '__main__':
-    email_163 = Email(imap=IMAP_SERVER, account=ACCOUNT, password=PASSWORD, file_save_path=FILE_SAVE_PATH)
+    # 示例：请传入实际的账号与授权码；服务器将自动匹配
+    demo_account = os.environ.get('DEMO_EMAIL_ACCOUNT', '')
+    demo_password = os.environ.get('DEMO_EMAIL_PASSWORD', '')
+    email_163 = Email(imap=get_imap_server(demo_account), account=demo_account, password=demo_password, file_save_path=FILE_SAVE_PATH)
     print(email_163.get_newest())
 
