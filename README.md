@@ -79,12 +79,39 @@ python email_mcp_server.py
 
 服务器提供以下MCP工具：
 
-1. `get_newest_email` - 获取最新的未读邮件
-2. `check_emails` - 检查指定类型和数量的邮件
-3. `save_attachment` - 保存指定的附件
-4. `send_text_email` - 发送纯文本邮件
-5. `send_html_email` - 发送HTML格式邮件
-6. `send_email_with_attachment` - 发送带附件的邮件
+1. `get_newest_email` - 获取最新的未读邮件（可选覆盖参数：`imap_server`、`account`、`password`）
+2. `check_emails` - 检查指定类型和数量的邮件（可选覆盖参数：`imap_server`、`account`、`password`）
+3. `save_attachment` - 保存指定的附件（可选覆盖参数：`imap_server`、`account`、`password`）
+4. `send_text_email` - 发送纯文本邮件（可选覆盖参数：`smtp_server`、`account`、`password`）
+5. `send_html_email` - 发送HTML格式邮件（可选覆盖参数：`smtp_server`、`account`、`password`）
+6. `send_email_with_attachment` - 发送带附件的邮件（可选覆盖参数：`smtp_server`、`account`、`password`）
+
+### 发送示例：自定义发送者账号
+
+```bash
+curl -X POST http://localhost:7860/gradio_api/mcp/run/send_text_email \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to_addr": "someone@example.com",
+    "subject": "自定义发件人测试",
+    "content": "这是一封从自定义发件人发送的测试邮件",
+    "account": "your_email@163.com",
+    "password": "your_app_password",
+    "smtp_server": "smtp.163.com"
+  }'
+```
+
+### 读取示例：自定义接收账号
+
+```bash
+curl -X POST http://localhost:7860/gradio_api/mcp/run/get_newest_email \
+  -H "Content-Type: application/json" \
+  -d '{
+    "account": "your_email@163.com",
+    "password": "your_app_password",
+    "imap_server": "imap.163.com"
+  }'
+```
 
 ## 连接到MCP客户端
 

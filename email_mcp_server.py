@@ -10,14 +10,27 @@ from receive_163 import Email
 # 导入163邮箱发送模块
 from send_163 import EmailSender
 
-def get_newest_email() -> Dict[str, Any]:
+def get_newest_email(
+    imap_server: Optional[str] = None,
+    account: Optional[str] = None,
+    password: Optional[str] = None,
+) -> Dict[str, Any]:
     """
     获取最新的未读邮件，包括发件人、主题、内容和附件信息。
     
     Returns:
         Dict: 包含邮件信息的字典，包括发件人、主题、日期、内容和附件列表
+
+    可选参数（用于覆盖环境变量配置）:
+        imap_server (str, optional): 自定义IMAP服务器地址
+        account (str, optional): 邮箱账号
+        password (str, optional): 授权码/密码
     """
-    email_163 = Email(imap=IMAP_SERVER, account=ACCOUNT, password=PASSWORD)
+    email_163 = Email(
+        imap=imap_server or IMAP_SERVER,
+        account=account or ACCOUNT,
+        password=password or PASSWORD,
+    )
     msg_data = email_163.get_newest()
     return {
         "from": msg_data.get('from', '未知'),
@@ -27,7 +40,13 @@ def get_newest_email() -> Dict[str, Any]:
         "files": msg_data.get('files', [])
     }
 
-def check_emails(message_type: str = "Unseen", count: int = 5) -> List[Dict[str, Any]]:
+def check_emails(
+    message_type: str = "Unseen",
+    count: int = 5,
+    imap_server: Optional[str] = None,
+    account: Optional[str] = None,
+    password: Optional[str] = None,
+) -> List[Dict[str, Any]]:
     """
     检查指定类型和数量的邮件。
     
@@ -37,8 +56,17 @@ def check_emails(message_type: str = "Unseen", count: int = 5) -> List[Dict[str,
         
     Returns:
         List[Dict]: 包含邮件信息的字典列表
+
+    可选参数（用于覆盖环境变量配置）:
+        imap_server (str, optional): 自定义IMAP服务器地址
+        account (str, optional): 邮箱账号
+        password (str, optional): 授权码/密码
     """
-    email_163 = Email(imap=IMAP_SERVER, account=ACCOUNT, password=PASSWORD)
+    email_163 = Email(
+        imap=imap_server or IMAP_SERVER,
+        account=account or ACCOUNT,
+        password=password or PASSWORD,
+    )
     messages = []
     
     # 设置为False以获取多封邮件，而不仅仅是最新的一封
@@ -53,7 +81,13 @@ def check_emails(message_type: str = "Unseen", count: int = 5) -> List[Dict[str,
     
     return messages
 
-def save_attachment(file_name: str, save_path: str = '') -> str:
+def save_attachment(
+    file_name: str,
+    save_path: str = '',
+    imap_server: Optional[str] = None,
+    account: Optional[str] = None,
+    password: Optional[str] = None,
+) -> str:
     """
     保存指定的附件到指定路径。
     
@@ -63,8 +97,18 @@ def save_attachment(file_name: str, save_path: str = '') -> str:
         
     Returns:
         str: 保存的文件路径
+
+    可选参数（用于覆盖环境变量配置）:
+        imap_server (str, optional): 自定义IMAP服务器地址
+        account (str, optional): 邮箱账号
+        password (str, optional): 授权码/密码
     """
-    email_163 = Email(imap=IMAP_SERVER, account=ACCOUNT, password=PASSWORD, file_save_path=save_path)
+    email_163 = Email(
+        imap=imap_server or IMAP_SERVER,
+        account=account or ACCOUNT,
+        password=password or PASSWORD,
+        file_save_path=save_path,
+    )
     msg_data = email_163.get_newest()
     
     # 检查附件是否存在
@@ -79,7 +123,15 @@ def save_attachment(file_name: str, save_path: str = '') -> str:
     else:
         return f"未找到名为 {file_name} 的附件"
 
-def send_text_email(to_addr: Union[str, List[str]], subject: str, content: str, cc_addr: Union[str, List[str], None] = None) -> Dict[str, str]:
+def send_text_email(
+    to_addr: Union[str, List[str]],
+    subject: str,
+    content: str,
+    cc_addr: Union[str, List[str], None] = None,
+    smtp_server: Optional[str] = None,
+    account: Optional[str] = None,
+    password: Optional[str] = None,
+) -> Dict[str, str]:
     """
     发送纯文本邮件
     
@@ -91,11 +143,28 @@ def send_text_email(to_addr: Union[str, List[str]], subject: str, content: str, 
         
     Returns:
         dict: 包含发送状态和消息的字典
+
+    可选参数（用于覆盖环境变量配置）:
+        smtp_server (str, optional): 自定义SMTP服务器地址
+        account (str, optional): 发送者邮箱账号
+        password (str, optional): 授权码/密码
     """
-    sender = EmailSender()
+    sender = EmailSender(
+        smtp_server=smtp_server or SMTP_SERVER,
+        account=account or ACCOUNT,
+        password=password or PASSWORD,
+    )
     return sender.send_text_email(to_addr, subject, content, cc_addr)
 
-def send_html_email(to_addr: Union[str, List[str]], subject: str, html_content: str, cc_addr: Union[str, List[str], None] = None) -> Dict[str, str]:
+def send_html_email(
+    to_addr: Union[str, List[str]],
+    subject: str,
+    html_content: str,
+    cc_addr: Union[str, List[str], None] = None,
+    smtp_server: Optional[str] = None,
+    account: Optional[str] = None,
+    password: Optional[str] = None,
+) -> Dict[str, str]:
     """
     发送HTML格式邮件
     
@@ -107,13 +176,30 @@ def send_html_email(to_addr: Union[str, List[str]], subject: str, html_content: 
         
     Returns:
         dict: 包含发送状态和消息的字典
+
+    可选参数（用于覆盖环境变量配置）:
+        smtp_server (str, optional): 自定义SMTP服务器地址
+        account (str, optional): 发送者邮箱账号
+        password (str, optional): 授权码/密码
     """
-    sender = EmailSender()
+    sender = EmailSender(
+        smtp_server=smtp_server or SMTP_SERVER,
+        account=account or ACCOUNT,
+        password=password or PASSWORD,
+    )
     return sender.send_html_email(to_addr, subject, html_content, cc_addr)
 
-def send_email_with_attachment(to_addr: Union[str, List[str]], subject: str, content: str, 
-                              attachment_paths: Union[str, List[str]], cc_addr: Union[str, List[str], None] = None, 
-                              is_html: bool = False) -> Dict[str, str]:
+def send_email_with_attachment(
+    to_addr: Union[str, List[str]],
+    subject: str,
+    content: str,
+    attachment_paths: Union[str, List[str]],
+    cc_addr: Union[str, List[str], None] = None,
+    is_html: bool = False,
+    smtp_server: Optional[str] = None,
+    account: Optional[str] = None,
+    password: Optional[str] = None,
+) -> Dict[str, str]:
     """
     发送带附件的邮件
     
@@ -127,8 +213,17 @@ def send_email_with_attachment(to_addr: Union[str, List[str]], subject: str, con
         
     Returns:
         dict: 包含发送状态和消息的字典
+
+    可选参数（用于覆盖环境变量配置）:
+        smtp_server (str, optional): 自定义SMTP服务器地址
+        account (str, optional): 发送者邮箱账号
+        password (str, optional): 授权码/密码
     """
-    sender = EmailSender()
+    sender = EmailSender(
+        smtp_server=smtp_server or SMTP_SERVER,
+        account=account or ACCOUNT,
+        password=password or PASSWORD,
+    )
     return sender.send_email_with_attachment(to_addr, subject, content, attachment_paths, cc_addr, is_html)
 
 # 创建Gradio界面
